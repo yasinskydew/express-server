@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "server on node",
+  "main": "index.js",
+  "scripts": {
+    "build": "env-cmd -f ./config/start.env node src/index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+    "mongo": "/Users/vova/mongodb/bin/mongod.exe --dbpath=/Users/vova/mongodb-data"
+  },
+  "author": "yasinsky vladimir",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.3.2",
+    "mongoose": "^5.7.1"
+  },
+  "devDependencies": {
+    "@hapi/joi": "^16.1.4",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "nodemon": "^1.19.2",
+    "path": "^0.12.7",
+    "uniqid": "^5.0.3"
+  }
+}
