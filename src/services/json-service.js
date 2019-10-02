@@ -52,13 +52,14 @@ const updateUserStore = (id, obj) => {
         name: obj.name,
         surname: obj.surname,
     }
+
     if(validData(user)){
         _store = _store.filter(el => el._id !== id)
         _store.push(user)
         fs.writeFileSync(store_path, JSON.stringify(_store))
         return _store
     } else {
-        return 'bad data'
+        return 'incorrect user data'
     }  
 }
 

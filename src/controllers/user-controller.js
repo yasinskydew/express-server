@@ -1,35 +1,50 @@
-const User = require('../models/user') // connect to json service
-// const User = require('../models/mUser') // connect to mongo service
 class UserController {
     constructor(){}
-    getUsers = async (req, res) => {
+    login = (User) => async (req, res) => {
         try {
-            res.status(200).send(await User.find({}))
+            const user = await User.findByCredentials(req.body.login, req.body.password)  
+            res.send(user)  
         } catch (e) {
             res.status(400).send(e)
         }
     }
-    addUser = async (req, res) => {
-        const user = new User(req.body)
+
+    getUserWithRaces = (User) => async (req, res) => {
+        const login = req.params.login              
         try {
-            res.status(201).send(await user.save())
+            const result = await User.aggregate([
+                {$match: {login: login}},
+                {
+                    $lookup: {
+                        from: "races",
+                        localField: "_id",
+                        foreignField: "user",
+                        as: "race"
+                    }
+                }
+            ])
+            res.send(result)
         } catch (e) {
-            res.status(400).send(e)
+            res.status(400).send(e.message)
         }
     }
- 
-    updateUser = async (req, res) => {
+    getUserWithLeague = (User) => async (req, res) => {
+        const login = req.params.login              
         try {
-            res.status(201).send(await User.findByIdAndUpdate(req.body._id, {name: req.body.name, surname: req.body.surname}))
+            const result = await User.aggregate([
+                {$match: {login: login}},
+                {
+                    $lookup: {
+                        from: "leagues",
+                        localField: "_id",
+                        foreignField: "users",
+                        as: "league"
+                    }
+                }
+            ])
+            res.send(result)
         } catch (e) {
-            res.status(400).send(e)
-        }
-    }
-    deleteUser = async (req, res) => {
-        try{
-            res.send(await User.remove({_id: req.body._id}))
-        } catch (e) {
-            res.status(400).send(e)
+            res.status(400).send(e.message)
         }
     }
 }

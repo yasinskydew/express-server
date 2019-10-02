@@ -1,12 +1,13 @@
 const express = require('express')
-const userRouter = require('./routers/user')
+const router = require('./routers/export-router')
 require('./services/mongoose')
 
 const app = express()
 const port = process.env.PORT || 8080
 
 app.use(express.json())
-app.use(userRouter)
+router.forEach(el => app.use(el))
+
 
 app.listen(port, () => {
     console.log('server on port ' + port)
