@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-// const League = require('../models/league')
+const jwt = require('jsonwebtoken')
+const League = require('../models/league')
+const Race = require('../models/race')
 const userSchema = new mongoose.Schema({
     login: {
         type: String,
@@ -21,7 +23,17 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 7,
         trim: true
-    }
+    },
+    role: {
+        type:String,
+        default: 'user'
+    },
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }],
 })
 
 userSchema.statics.findByCredentials = async (login, password) => {
@@ -38,12 +50,32 @@ userSchema.statics.findByCredentials = async (login, password) => {
     return user
 }
 
+userSchema.methods.generateAuthToken = async function () {
+    const user = this
+    const token = jwt.sign({_id: user._id.toString() }, 'expressapp');
+    user.tokens = user.tokens.concat({ token })
+    user.save()
+
+    return token
+}
+
 userSchema.pre('save', async function(next){
     const user = this
     if(user.isModified('password')){
         user.password = await bcrypt.hash(user.password, 8)
     }
     next()
+})
+
+userSchema.pre('remove', async function(next) {
+    const user = this
+    await League.update(
+       {users: user._id},
+       {$pull: {users: user._id} },
+       {multi: true})
+    .exec();
+    await Race.remove({user: user._id}).exec();
+    next();
 })
 
 const User = mongoose.model('User', userSchema)

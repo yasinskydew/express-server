@@ -6,8 +6,10 @@ const app = express()
 const port = process.env.PORT || 8080
 
 app.use(express.json())
-router.forEach(el => app.use(el))
-
+app.use('/users', router.userRouter)
+app.use('/leagues', router.leagueRouter)
+app.use('/races', router.raceRouter)
+app.use('/stages', router.stageRouter)
 
 app.listen(port, () => {
     console.log('server on port ' + port)

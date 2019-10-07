@@ -1,17 +1,16 @@
 const express = require('express')
-const CrudController = require('../controllers/crud-controller')
-const crud_controller = new CrudController()
 const LeagueController = require('../controllers/league-controller')
 const league_controller = new LeagueController()
 const router = new express.Router()
+const admin = require('../middleware/admin')
 
-// import models
-const League = require('../models/league');
+
 // League router
-router.get('/leagues', crud_controller.getData(League))
-router.post('/leagues', league_controller.addLeague(League))
-router.put('/leagues/:id', crud_controller.updateData(League))
-router.delete('/leagues/:id', crud_controller.deleteData(League))
+router.get('/', admin, league_controller.getLeague)
+router.get('/:id', admin, league_controller.getLeagueId)
+router.post('/', admin, league_controller.addLeague)
+router.put('/:id', admin, league_controller.updateLeague)
+router.delete('/:id', admin, league_controller.deleteLeague)
 
 module.exports = router
 

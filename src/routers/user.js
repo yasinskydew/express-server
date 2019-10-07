@@ -1,27 +1,25 @@
 const express = require('express')
-const CrudController = require('../controllers/crud-controller')
+const auth = require('../middleware/auth')
+const admin = require('../middleware/admin')
+
 const UserController = require('../controllers/user-controller')
-const crud_controller = new CrudController()
 const user_controller = new UserController()
 
 const router = new express.Router()
 
-// import models
-const User = require('../models/user');
-router.get('/users/race/:login', user_controller.getUserWithRaces(User))
-router.get('/users/league/:login', user_controller.getUserWithLeague(User))
+router.delete('/me', auth, user_controller.deleteUser)
+router.get('/race/:login',auth, user_controller.getUserWithRaces)
+router.get('/registrated/league/:title',auth, user_controller.registratedOnLeague)
+router.get('/league/:login',auth, user_controller.getUserWithLeague)
+
 
 // User router
-router.get('/users', crud_controller.getData(User))
-router.post('/users', crud_controller.addData(User))
-router.put('/users/:id', crud_controller.updateData(User))
-router.delete('/users/:id', crud_controller.deleteData(User))
-
-
-router.get('/users/:id', crud_controller.getDataId(User))
-router.post('/users/login', user_controller.login(User))
-// router.get('/users/with-league', user_controller.getUserWithLeagues)
-
-
+router.get('/', admin,  user_controller.getUser)
+router.post('/', user_controller.addUser)
+router.post('/login', user_controller.login)
+router.get('/me',auth, user_controller.profile)
+router.post('/logout',auth, user_controller.logout)
+router.put('/:id', admin, user_controller.updateUser)
+router.get('/:id', admin, user_controller.getUserId)
 module.exports = router
 

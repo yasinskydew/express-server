@@ -5,9 +5,9 @@ const stageRouter = require('../routers/stage')
 
 
 
-module.exports = [
+module.exports = {
     userRouter,
     leagueRouter,
     raceRouter,
     stageRouter
-]
+}

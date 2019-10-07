@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Race = require('../models/race')
 const League = require('../models/league')
 const stageSchema = new mongoose.Schema({
     title: {
@@ -15,7 +16,6 @@ const stageSchema = new mongoose.Schema({
     },
     league: {
         type:mongoose.Schema.Types.ObjectId,
-        ref: 'League',
         required: true
     }
 })
@@ -29,6 +29,11 @@ stageSchema.statics.findByCredentials = async (stage) => {
     }  
 }
 
+stageSchema.pre('findOneAndRemove', async function (next) {
+    const id = this._conditions._id
+    await Race.remove({stage: id}).exec();
+    next();
+})
 
 const Stage = mongoose.model('Stage', stageSchema)
 module.exports = Stage

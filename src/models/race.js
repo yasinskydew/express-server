@@ -12,12 +12,10 @@ const raceSchema = new mongoose.Schema({
     },
     stage: {
        type: mongoose.Schema.Types.ObjectId,
-       ref: 'Stage',
        required: true
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
         required: true
      }
 })
