@@ -1,79 +1,49 @@
-const Race = require('../models/race');
-const League = require('../models/league');
-const Stage = require('../models/stage');
-const User = require('../models/user');
-
-
+const service = require('../services/race-service')
 class RaceController {
     constructor(){}
     getRaces = async (req, res) => {
         try {
-            res.status(200).send(await Race.find({}))
+            const result = service.get()
+            res.status(200).send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
     }
     addRace = async (req, res) => {
         try {
-            const race = new Race(req.body) 
-            const stageId = race.stage;
-            const userId = race.user;
-            const stage = await Stage.findOne(stageId)
-            const user = await User.findOne(userId)
-            if(!stage || !user){
-                throw new Error('Unknown user or stage')
-            }
-            race.save()
-            res.status(201).send(race)
+            const result = await service.add(req)
+            res.status(201).send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
     }
     updateRace = async (req, res) => {
         try {
-            res.status(201).send(await Race.findByIdAndUpdate(req.params.id, req.body))
+            const result = await service.update(req)
+            res.status(201).send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
     }
     deleteRace = async (req, res) => {
         try {
-            res.send(await Race.remove({_id: req.params.id}))
+            const result = await service.del(req)
+            res.send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
     }
     getRaceId = async (req, res) => {
         try {
-            res.send(await Race.findById(req.params.id))
+            const result = await service.getById(req)
+            res.send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
     }
     getRacesWithStage = async (req, res) => {
-        const season = req.params.season              
-        try {
-            const result = await League.aggregate([
-                {$match: {season}},
-                {
-                    $lookup: {
-                        from: "stages",
-                        localField: "_id",
-                        foreignField: "league",
-                        as: "league-stage"
-                    }
-                },
-                {$unwind: "$league-stage"},
-                {
-                    $lookup: {
-                        from: "races",
-                        localField: "league-stage._id",
-                        foreignField: "stage",
-                        as: "race-stage"
-                    }
-                },
-                {$unwind: "$race-stage"}
-            ])
+        try{
+            const result = service.getStage(req)
             res.send(result)
         } catch (e) {
             res.status(400).sendsend({error: e.message})

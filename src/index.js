@@ -1,6 +1,12 @@
 const express = require('express')
 const router = require('./routers/export-router')
-require('./services/mongoose')
+const mongoose = require('mongoose')
+mongoose.connect(process.env.MONGO_DB, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true
+})
 
 const app = express()
 const port = process.env.PORT || 8080

@@ -1,24 +1,18 @@
-const Stage = require('../models/stage');
-const League = require('../models/league');
+const service = require('../services/stage-service')
 class StageController {
     constructor(){}
     addStage = async (req, res) => {
         try {
-            const stage = new Stage(req.body)
-            const leagueId = stage.league
-            const league = await League.findOne(leagueId)
-            if(!league){
-                throw new Error('unknown league')
-            }
-            await stage.save()
-            res.status(201).send(stage)
+            const result = service.add(req)
+            res.status(201).send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
     }
     getStage = async (req, res) => {
         try {
-            res.status(200).send(await Stage.find({}))
+            const result = await service.get()
+            res.send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
@@ -26,7 +20,8 @@ class StageController {
 
     updateStage = async (req, res) => {
         try {
-            res.status(201).send(await Stage.findByIdAndUpdate(req.params.id, req.body))
+            const result = service.update(req)
+            res.status(201).send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
@@ -34,7 +29,7 @@ class StageController {
 
     deleteStage = async (req, res) => {
         try {
-            const result = await Stage.findOneAndRemove({_id: req.params.id})
+            const result = del(req)
             res.send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
@@ -43,7 +38,8 @@ class StageController {
     
     getStageId = async (req, res) => {
         try {
-            res.send(await Stage.findById(req.params.id))
+            const result = this.getById(req)
+            res.send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }

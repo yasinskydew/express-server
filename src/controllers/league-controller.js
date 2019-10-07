@@ -1,18 +1,17 @@
-const League = require('../models/league');
+const service = require('../services/league-service')
 class LeagueController {
     constructor(){}
     addLeague = async (req, res) => {
         try {
-            const league = new League(req.body) 
-            league.save()
-            res.status(201).send(league)
+            const result = service.add(req)
+            res.status(201).send(result)
         } catch (e) {
             res.status(400).send({error:e.message})
         }
     }
     getLeague = async (req, res) => {
         try {
-            const result = await League.find({})
+            const result = await service.get()
             res.status(200).send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
@@ -20,22 +19,24 @@ class LeagueController {
     } 
     updateLeague = async (req, res) => {
         try {
-            res.status(201).send(await League.findByIdAndUpdate(req.params.id, req.body))
+            const result = await service.update(req)
+            res.status(201).send(result)
         } catch (e) {
             res.status(400).send(e)
         }
     }
     deleteLeague = async (req, res) => {
         try {
-            const leg = await League.findOneAndRemove({_id: req.params.id});
-            res.send(leg)
+            const result = await service.del(req) 
+            res.send(result)
         } catch (e) {
             res.status(400).send({error: e.message})
         }
     }
     getLeagueId = async (req, res) => {
         try {
-            res.send(await League.findById(req.params.id))
+            const result = await service.delById(req) 
+            res.send(result)
         } catch (e) {
             res.status(400).send({error:e.message})
         }

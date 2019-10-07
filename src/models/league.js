@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const User = require('../models/user');
 const Stage = require('../models/stage');
+const Race = require('../models/race');
 const leagueSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -21,21 +21,12 @@ const leagueSchema = new mongoose.Schema({
     }
 })
 
-leagueSchema.statics.findByCredentials = async (league) => {
-    const result = league.users.filter(async el => await User.findById(el))
-    if(result){
-        return league
-    } else {
-        return undefined
-
-    }
-}
-
 leagueSchema.pre('findOneAndRemove', async function (next) {
     const id = this._conditions._id
+    const stages = await Stage.find({league:id})
+    stages.forEach( async (element)  => await Race.remove({stage: element._id}).exec());
     await Stage.remove({league: id}).exec();
     next();
 })
-
 const League = mongoose.model('League', leagueSchema)
 module.exports = League
