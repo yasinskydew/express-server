@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "env-cmd -f ./config/start.env node src/index.js",
+    "swag": "swagger-inline ./src/routers/*.js --base ./swaggerBase.json --out ./swagger.json",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
     "mongo": "/Users/vova/mongodb/bin/mongod.exe --dbpath=/Users/vova/mongodb-data"
   },

@@ -11,9 +11,6 @@ router.delete('/me', auth, user_controller.deleteUser)
 router.get('/race/:login',auth, user_controller.getUserWithRaces)
 router.get('/registrated/league/:title',auth, user_controller.registratedOnLeague)
 router.get('/league/:login',auth, user_controller.getUserWithLeague)
-
-
-// User router
 router.get('/', admin,  user_controller.getUser)
 router.post('/', user_controller.addUser)
 router.post('/login', user_controller.login)
